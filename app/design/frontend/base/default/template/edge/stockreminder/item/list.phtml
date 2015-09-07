@@ -1,0 +1,58 @@
+<?php $columns = $this->getColumns(); ?>
+<table class="data-table" id="stockreminder-table">
+    <?php if (count($this->getStockItems())): ?>
+    <thead>
+        <tr class="first last">
+            <th></th>
+            <th><?php echo $this->__('Product Details') ?></th>
+            <th><?php echo $this->__('Add to Cart') ?></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($this->getStockItems() as $item): ?>
+            <?php $product = Mage::getModel('catalog/product')->load($item->getProductId()); ?>
+            <tr id="item_<?php echo $item->getStockreminderId();?>">
+                <td><a class="product-image" href="<?php echo $product->getProductUrl() ?>" title="<?php  echo $this->escapeHtml($product->getName()); ?>">
+                        <img src="<?php echo $this->helper('catalog/image')->init($product, 'small_image')->resize(113, 113); ?>" width="113" height="113" alt="<?php echo $this->escapeHtml($product->getName()) ?>" />
+                    </a>
+                </td>
+                <td><h3 class="product-name">
+                    <a href="<?php echo $product->getProductUrl() ?>" title="<?php  echo $this->escapeHtml($product->getName()); ?>">
+                        <?php  echo $this->escapeHtml($product->getName()); ?></a>
+                    </h3>
+                    <div class="description std">
+                        <div class="inner"><?php echo $product->getShortDescription(); ?></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="cart-cell">
+                        <?php echo $this->getPriceHtml($product);?>
+                        <div class="add-to-cart-alt">
+                        <?php if ($item->getQty() > 0): ?>
+                            <input type="text" class="input-text qty validate-not-negative-number" name="qty[<?php echo $item->getStockreminderId();?>]" value="<?php echo $item->getQty(); ?>" />
+                        <?php endif; ?>
+                        <?php if ($product->isSaleable()): ?>
+                            <button type="button" title="<?php echo $this->__('Add to Cart') ?>" id="product-addtocart-button" class="button btn-cart" onclick="productAddToCartForm.submit(this)"><span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
+                       <?php else: ?>
+                            <?php if ($product->getIsSalable()): ?>
+                                <p class="availability in-stock"><span><?php echo $this->__('In stock') ?></span></p>
+                            <?php else: ?>
+                                <p class="availability out-of-stock"><span><?php echo $this->__('Out of stock') ?></span></p>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        </div>
+                    </div>
+                </td>
+                <td class="last">
+                    <a href="<?php echo $this->getUrl('*/*/remove/', array('id' => $item->getStockreminderId())) ?>"
+                    title="<?php echo $this->__('Remove Item') ?>"
+                    class="btn-remove btn-remove2"><?php echo $this->__('Remove item');?></a>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        <?php else: ?>
+            <td colspan="<?php echo count($columns);?>" class="stockreminder-empty"><?php echo $this->__('This Stock Reminder has no products');?></td>
+        <?php endif; ?>
+    </tbody>
+</table>

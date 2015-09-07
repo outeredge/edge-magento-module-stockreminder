@@ -1,0 +1,24 @@
+{
+    "name": "outeredge/edge-magento-module-stockreminder",
+    "type": "magento-module",
+    "description": "Stock Reminder Module by outer/edge",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "outer/edge",
+            "email": "support@outeredgeuk.com"
+        }
+    ],
+    "require": {
+        "magento-hackathon/magento-composer-installer": "*"
+    },
+    "extra": {
+        "map": [
+            ["app/code/local/Edge/StockReminder", "app/code/local/Edge/StockReminder"],
+            ["app/etc/modules/Edge_StockReminder.xml", "app/etc/modules/Edge_StockReminder.xml"],
+            ["app/design/frontend/base/default/layout/edge/stockreminder.xml", "app/design/frontend/base/default/layout/edge/stockreminder.xml"],
+            ["app/design/frontend/base/default/template/edge/stockreminder/item/list.phtml", "app/design/frontend/base/default/template/edge/stockreminder/item/list.phtml"],
+            ["app/design/frontend/base/default/template/edge/stockreminder/view.phtml", "app/design/frontend/base/default/template/edge/stockreminder/view.phtml"]
+        ]
+    }
+}

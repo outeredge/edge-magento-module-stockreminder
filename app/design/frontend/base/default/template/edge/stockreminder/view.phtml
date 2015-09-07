@@ -1,0 +1,59 @@
+<div class="my-stockreminder">
+    <div class="page-title title-buttons">
+        <h1><?php echo $this->getTitle(); ?></h1>
+    </div>
+    <?php echo $this->getMessagesBlock()->toHtml(); ?>
+
+        <?php echo $this->getChildHtml('top'); ?>
+        <fieldset>
+            <?php
+            if ($this->hasStockreminderItems()): ?>
+                <?php echo $this->getBlockHtml('formkey');?>
+                <?php $this->getChild('items')->setItems($this->getStockreminderItems()); ?>
+                <?php echo $this->getChildHtml('items');?>
+                <script type="text/javascript">decorateTable('stockreminder-table')</script>
+            <?php else: ?>
+                <p class="stockreminder-empty"><?php echo $this->__('You have no items in your Stock Reminder.') ?></p>
+            <?php endif ?>
+            <div class="buttons-set buttons-set2">
+                <?php echo $this->getChild('control_buttons')->toHtml();?>
+            </div>
+        </fieldset>
+
+    <form id="stockreminder-allcart-form" action="<?php echo $this->getUrl('*/*/allcart') ?>" method="post">
+        <?php echo $this->getBlockHtml('formkey') ?>
+        <div class="no-display">
+            <input type="hidden" name="stockreminder_id" id="stockreminder_id" value="<?php echo $this->getStockreminderInstance()->getId() ?>" />
+            <input type="hidden" name="qty" id="qty" value="" />
+        </div>
+    </form>
+
+    <script type="text/javascript">
+    //<![CDATA[
+        var stockreminderForm = new Validation($('stockreminder-view-form'));
+        var stockreminderAllCartForm = new Validation($('stockreminder-allcart-form'));
+
+        function calculateQty() {
+            var itemQtys = new Array();
+            $$('#stockreminder-view-form .qty').each(
+                function (input, index) {
+                    var idxStr = input.name;
+                    var idx = idxStr.replace( /[^\d.]/g, '' );
+                    itemQtys[idx] = input.value;
+                }
+            );
+
+            $$('#qty')[0].value = JSON.stringify(itemQtys);
+        }
+
+        function addAllWItemsToCart() {
+            calculateQty();
+            stockreminderAllCartForm.form.submit();
+        }
+    //]]>
+    </script>
+</div>
+<?php echo $this->getChildHtml('bottom'); ?>
+<div class="buttons-set">
+    <p class="back-link"><a href="<?php echo $this->escapeUrl($this->getBackUrl()) ?>"><small>&laquo; </small><?php echo $this->__('Back') ?></a></p>
+</div>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+
+    <customer_account translate="label">
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label" module="stockreminder"><name>stockreminder</name><path>stockreminder/index/index/</path><label>Stock Reminder</label></action>
+        </reference>
+    </customer_account>
+
+    <stockreminder_index_index translate="label">
+        <label>Customer My Account Stock Reminder</label>
+        <update handle="customer_account" />
+        <reference name="my.account.wrapper">
+            <block type="stockreminder/stockreminder" name="stockreminder" template="edge/stockreminder/view.phtml">
+                <action method="setTitle" translate="title">
+                    <title>Stock Reminder</title>
+                </action>
+                <block type="stockreminder/stockreminder" name="stockreminder.items" as="items" template="edge/stockreminder/item/list.phtml" />
+                <block type="core/text_list" name="customer.wishlist.buttons" as="control_buttons">
+                    <block type="wishlist/customer_wishlist_button" name="customer.wishlist.button.toCart" template="wishlist/button/tocart.phtml" />
+                </block>
+            </block>
+        </reference>
+    </stockreminder_index_index>
+</layout>
