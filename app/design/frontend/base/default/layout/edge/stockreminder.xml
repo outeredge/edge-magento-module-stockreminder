@@ -16,10 +16,8 @@
                     <title>Stock Reminder</title>
                 </action>
                 <block type="stockreminder/stockreminder" name="stockreminder.items" as="items" template="edge/stockreminder/item/list.phtml" />
-                <block type="core/text_list" name="customer.wishlist.buttons" as="control_buttons">
-                    <block type="wishlist/customer_wishlist_button" name="customer.wishlist.button.toCart" template="wishlist/button/tocart.phtml" />
-                </block>
             </block>
         </reference>
     </stockreminder_index_index>
+
 </layout>
