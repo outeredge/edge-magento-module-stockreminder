@@ -7,7 +7,7 @@ class Edge_StockReminder_Model_Observer
         $product = $data['product'];
         $customerId = Mage::getSingleton('customer/session')->getCustomerId();
 
-        if (!$product->getId() || Mage::getModel('cataloginventory/stock_item')->loadByProduct($product)->getIsInStock()) {
+        if (!$product->getId() || Mage::getModel('cataloginventory/stock_item')->loadByProduct($product)->getQty() > 0) {
             return;
         }
 
@@ -48,6 +48,8 @@ class Edge_StockReminder_Model_Observer
                 echo $e->getMessage();
             }
         }
+
+        $this->removeLastProductAddedToCart($product);
     }
 
     public function sendStockIsBack($observer)
@@ -58,7 +60,7 @@ class Edge_StockReminder_Model_Observer
             return;
         }
 
-        $stockReminder = Mage::getModel('stockreminder/stockreminder')->getStockByProduct($stockUpdated->getProductId());
+        $stockReminders = Mage::getModel('stockreminder/stockreminder')->getStockByProduct($stockUpdated->getProductId());
         if (!$stockReminders) {
             return;
         }
@@ -93,5 +95,12 @@ class Edge_StockReminder_Model_Observer
         }
 
         return $this;
+    }
+
+    public function removeLastProductAddedToCart($productId)
+    {
+        $cart = Mage::getSingleton('checkout/cart');
+        $cart->removeItem($productId);
+        $cart->save();
     }
 }
