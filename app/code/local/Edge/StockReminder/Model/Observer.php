@@ -48,7 +48,50 @@ class Edge_StockReminder_Model_Observer
                 echo $e->getMessage();
             }
         }
-
     }
 
+    public function sendStockIsBack($observer)
+    {
+        $stockUpdated = $observer->getEvent()->getDataObject();
+
+        if ($stockUpdated->getQty() <= 0) {
+            return;
+        }
+
+        $stockReminder = Mage::getModel('stockreminder/stockreminder')->getStockByProduct($stockUpdated->getProductId());
+        if (!$stockReminders) {
+            return;
+        }
+
+        $translate = Mage::getSingleton('core/translate');
+        /* @var $translate Mage_Core_Model_Translate */
+        $translate->setTranslateInline(false);
+
+        $templateCode = 'stock_reminder_email_template';
+        $storeId      = Mage::app()->getStore()->getStoreId();
+
+        foreach ($stockReminders as $stockReminder) {
+            $productData  = Mage::getModel('catalog/product')->load($stockUpdated->getProductId());
+            $customerData = Mage::getModel('customer/customer')->load($stockReminder['customer_id'])->getData();
+            $email        = $customerData['email'];
+            $name         = $customerData['firstname'].' '.$customerData['lastname'];
+
+            $mailTemplate = Mage::getModel('core/email_template');
+            $mailTemplate->setDesignConfig(array('area' => 'frontend', 'store' => $storeId))
+                ->sendTransactional(
+                    $templateCode,
+                    'general',
+                    $email,
+                    $name,
+                    array(
+                        'product'  => $productData,
+                        'stock'    => $stockUpdated
+                    )
+            );
+            $translate->setTranslateInline(true);
+
+        }
+
+        return $this;
+    }
 }

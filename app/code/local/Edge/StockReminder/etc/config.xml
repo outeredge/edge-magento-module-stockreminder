@@ -50,6 +50,25 @@
                 <class>Edge_StockReminder_Block</class>
             </stockreminder>
         </blocks>
+        <events>
+            <cataloginventory_stock_item_save_commit_after>
+                <observers>
+                    <send_stock_is_back>
+                        <class>Edge_StockReminder_Model_Observer</class>
+                        <method>sendStockIsBack</method>
+                    </send_stock_is_back>
+                </observers>
+            </cataloginventory_stock_item_save_commit_after>
+        </events>
+        <template>
+            <email>
+                <stock_reminder_email_template translate="label" module="stockreminder">
+                    <label>Stock Reminder email template</label>
+                    <file>stock_reminder.html</file>
+                    <type>html</type>
+                </stock_reminder_email_template>
+            </email>
+        </template>
     </global>
 
     <frontend>

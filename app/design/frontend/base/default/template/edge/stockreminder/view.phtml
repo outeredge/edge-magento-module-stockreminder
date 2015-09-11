@@ -15,9 +15,6 @@
             <?php else: ?>
                 <p class="stockreminder-empty"><?php echo $this->__('You have no items in your Stock Reminder.') ?></p>
             <?php endif ?>
-            <div class="buttons-set buttons-set2">
-                <?php echo $this->getChild('control_buttons')->toHtml();?>
-            </div>
         </fieldset>
 
     <form id="stockreminder-allcart-form" action="<?php echo $this->getUrl('*/*/allcart') ?>" method="post">
