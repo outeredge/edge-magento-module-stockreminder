@@ -86,5 +86,13 @@ class Edge_StockReminder_Model_Stockreminder extends Mage_Core_Model_Abstract
 
         return true;
     }
+
+    public function getStockByProduct($productId) {
+
+        $result = $this->getCollection()
+            ->addFilter('product_id', $productId);
+
+        return $result->getData();
+    }
 }
 
