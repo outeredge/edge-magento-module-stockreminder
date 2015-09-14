@@ -16,39 +16,6 @@
                 <p class="stockreminder-empty"><?php echo $this->__('You have no items in your Stock Reminder.') ?></p>
             <?php endif ?>
         </fieldset>
-
-    <form id="stockreminder-allcart-form" action="<?php echo $this->getUrl('*/*/allcart') ?>" method="post">
-        <?php echo $this->getBlockHtml('formkey') ?>
-        <div class="no-display">
-            <input type="hidden" name="stockreminder_id" id="stockreminder_id" value="<?php echo $this->getStockreminderInstance()->getId() ?>" />
-            <input type="hidden" name="qty" id="qty" value="" />
-        </div>
-    </form>
-
-    <script type="text/javascript">
-    //<![CDATA[
-        var stockreminderForm = new Validation($('stockreminder-view-form'));
-        var stockreminderAllCartForm = new Validation($('stockreminder-allcart-form'));
-
-        function calculateQty() {
-            var itemQtys = new Array();
-            $$('#stockreminder-view-form .qty').each(
-                function (input, index) {
-                    var idxStr = input.name;
-                    var idx = idxStr.replace( /[^\d.]/g, '' );
-                    itemQtys[idx] = input.value;
-                }
-            );
-
-            $$('#qty')[0].value = JSON.stringify(itemQtys);
-        }
-
-        function addAllWItemsToCart() {
-            calculateQty();
-            stockreminderAllCartForm.form.submit();
-        }
-    //]]>
-    </script>
 </div>
 <?php echo $this->getChildHtml('bottom'); ?>
 <div class="buttons-set">
