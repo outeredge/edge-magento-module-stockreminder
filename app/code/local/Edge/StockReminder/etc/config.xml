@@ -82,6 +82,16 @@
                 </observers>
             </checkout_cart_product_add_after>
         </events>
+        <events>
+            <checkout_cart_add_product_complete>
+                <observers>
+                    <check_out_of_stock>
+                        <class>Edge_StockReminder_Model_Observer</class>
+                        <method>updateCart</method>
+                    </check_out_of_stock>
+                </observers>
+            </checkout_cart_add_product_complete>
+        </events>
         <routers>
             <stockreminder>
                 <use>standard</use>
