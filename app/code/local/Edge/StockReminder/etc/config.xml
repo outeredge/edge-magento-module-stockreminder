@@ -50,16 +50,6 @@
                 <class>Edge_StockReminder_Block</class>
             </stockreminder>
         </blocks>
-        <events>
-            <cataloginventory_stock_item_save_commit_after>
-                <observers>
-                    <send_stock_is_back>
-                        <class>Edge_StockReminder_Model_Observer</class>
-                        <method>sendStockIsBack</method>
-                    </send_stock_is_back>
-                </observers>
-            </cataloginventory_stock_item_save_commit_after>
-        </events>
         <template>
             <email>
                 <stock_reminder_email_template translate="label" module="stockreminder">
@@ -72,7 +62,7 @@
     </global>
 
     <frontend>
-         <events>
+        <events>
             <checkout_cart_product_add_after>
                 <observers>
                     <check_out_of_stock>
@@ -109,4 +99,12 @@
             </updates>
         </layout>
     </frontend>
+    <crontab>
+        <jobs>
+            <send_stock_is_back>
+                <schedule><cron_expr>0 0 * * 0</cron_expr></schedule>
+                <run><model>stockreminder/observer::sendStockIsBack</model></run>
+            </send_stock_is_back>
+        </jobs>
+    </crontab>
 </config>

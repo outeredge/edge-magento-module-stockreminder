@@ -11,7 +11,9 @@
     </thead>
     <tbody>
         <?php foreach ($this->getStockItems() as $item): ?>
-            <?php $product = Mage::getModel('catalog/product')->load($item->getProductId()); ?>
+            <?php $product = Mage::getModel('catalog/product')->load($item->getProductId());
+                  $stocklevel = (int)Mage::getModel('cataloginventory/stock_item')
+                                    ->loadByProduct($product)->getQty(); ?>
             <tr id="item_<?php echo $item->getStockreminderId();?>">
                 <td><a class="product-image" href="<?php echo $product->getProductUrl() ?>" title="<?php  echo $this->escapeHtml($product->getName()); ?>">
                         <img src="<?php echo $this->helper('catalog/image')->init($product, 'small_image')->resize(113, 113); ?>" width="113" height="113" alt="<?php echo $this->escapeHtml($product->getName()) ?>" />
@@ -34,7 +36,7 @@
                             <?php if ($item->getQty() > 0): ?>
                                 <input type="text" class="input-text qty validate-not-negative-number" name="qty" value="<?php echo $item->getQty(); ?>">
                             <?php endif; ?>
-                            <?php if ($product->isSaleable() && $product->getQty() > 0): ?>
+                            <?php if ($product->isSaleable() && $stocklevel > 0): ?>
                             <button type="submit" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart"><span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
                         </form>
                         <?php else: ?>

@@ -122,17 +122,20 @@ class Edge_StockReminder_Model_Observer
         $quote->collectTotals()->save();
     }
 
-    public function sendStockIsBack($observer)
+    public function sendStockIsBack()
     {
-        $stockUpdated = $observer->getEvent()->getDataObject();
+        $allStockReminders = Mage::getModel('stockreminder/stockreminder')->getCollection();
 
-        if ($stockUpdated->getQty() <= 0) {
-            return;
-        }
+        $stockReminders = [];
+        foreach ($allStockReminders as $stockReminder) {
+            $model = Mage::getModel('catalog/product');
+            $_product = $model->load($stockReminder['product_id']);
+            $stocklevel = (int)Mage::getModel('cataloginventory/stock_item')
+                            ->loadByProduct($_product)->getQty();
 
-        $stockReminders = Mage::getModel('stockreminder/stockreminder')->getStockByProduct($stockUpdated->getProductId());
-        if (!$stockReminders) {
-            return;
+            if ($stocklevel > 0) {
+                $stockReminders[] = $stockReminder;
+            }
         }
 
         $translate = Mage::getSingleton('core/translate');
@@ -143,7 +146,7 @@ class Edge_StockReminder_Model_Observer
         $storeId      = Mage::app()->getStore()->getStoreId();
 
         foreach ($stockReminders as $stockReminder) {
-            $productData  = Mage::getModel('catalog/product')->load($stockUpdated->getProductId());
+            $productData  = Mage::getModel('catalog/product')->load($stockReminder['product_id']);
             $customerData = Mage::getModel('customer/customer')->load($stockReminder['customer_id'])->getData();
             $email        = $customerData['email'];
             $name         = $customerData['firstname'].' '.$customerData['lastname'];
@@ -157,7 +160,7 @@ class Edge_StockReminder_Model_Observer
                     $name,
                     array(
                         'product'  => $productData,
-                        'stock'    => $stockUpdated
+                        'stock'    => $productData->getQty()
                     )
             );
             $translate->setTranslateInline(true);
