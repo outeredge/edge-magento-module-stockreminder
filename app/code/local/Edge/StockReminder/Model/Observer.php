@@ -23,6 +23,12 @@ class Edge_StockReminder_Model_Observer
         if ($productStock->getQty() >= $quoteItem->getQty()) {
             //Nothing to save on stockreminder
             $this->removeQty = false;
+
+            //Delete product from stock reminder if exist
+            $data = array('customer_id' => $customerId, 'product_id' => $product->getId());
+            if ($result = Mage::getModel('stockreminder/stockreminder')->getByCustomerAndProduct($data)) {
+                Mage::getModel('stockreminder/stockreminder')->removeStockReminder($result['stockreminder_id']);
+            }
             return;
         } elseif($productStock->getQty() != 0) {
             $stockReminderQty = $quoteItem->getQty() - $productStock->getQty();
