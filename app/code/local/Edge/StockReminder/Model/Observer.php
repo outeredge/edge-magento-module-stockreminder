@@ -124,7 +124,8 @@ class Edge_StockReminder_Model_Observer
 
     public function sendStockIsBack()
     {
-        $allStockReminders = Mage::getModel('stockreminder/stockreminder')->getCollection();
+        $allStockReminders = Mage::getModel('stockreminder/stockreminder')->getCollection()
+            ->addFilter('stock', 0);
 
         $stockReminders = [];
         foreach ($allStockReminders as $stockReminder) {
@@ -163,8 +164,9 @@ class Edge_StockReminder_Model_Observer
                         'stock'    => $productData->getQty()
                     )
             );
-            $translate->setTranslateInline(true);
 
+            Mage::getModel('stockreminder/stockreminder')->emailStockReminderSent($stockReminder['stockreminder_id']);
+            $translate->setTranslateInline(true);
         }
 
         return $this;

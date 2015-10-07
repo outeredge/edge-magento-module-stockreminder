@@ -94,5 +94,17 @@ class Edge_StockReminder_Model_Stockreminder extends Mage_Core_Model_Abstract
 
         return $result->getData();
     }
+
+    public function emailStockReminderSent($idStockReminder)
+    {
+        $model = $this->load($idStockReminder)->addData(array('stock' => 1));
+        try {
+            $model->setId($idStockReminder)->save();
+        } catch (Exception $e){
+            return $e->getMessage();
+        }
+
+        return true;
+    }
 }
 
