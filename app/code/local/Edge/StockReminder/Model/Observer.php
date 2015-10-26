@@ -8,6 +8,8 @@ class Edge_StockReminder_Model_Observer
     {
         $product    = $data->getEvent()->getProduct();
         $quoteItem  = $data->getEvent()->getQuoteItem();
+        $quantity   = Mage::app()->getRequest()->getParam('qty');
+
         $customerId = Mage::getSingleton('customer/session')->getCustomerId();
 
         if (!$product->getId()) {
@@ -20,7 +22,7 @@ class Edge_StockReminder_Model_Observer
         $stockReminderQty  = $product->getQty();
         $productStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
 
-        if ($productStock->getQty() >= $quoteItem->getQty()) {
+        if ($productStock->getQty() >= $quantity) {
             //Nothing to save on stockreminder
             $this->removeQty = false;
 
@@ -31,7 +33,7 @@ class Edge_StockReminder_Model_Observer
             }
             return;
         } elseif($productStock->getQty() != 0) {
-            $stockReminderQty = $quoteItem->getQty() - $productStock->getQty();
+            $stockReminderQty = $quantity - $productStock->getQty();
             $this->removeQty  = $productStock->getQty();
         }
 

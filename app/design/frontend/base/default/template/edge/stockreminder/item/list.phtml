@@ -29,13 +29,12 @@
                 </td>
                 <td>
                     <div class="cart-cell">
-                        <?php if ($product->isSaleable() && $stocklevel > 0): ?>
+                        <?php
+                        if ($product->isSaleable() && $stocklevel >= $item->getQty()): ?>
                             <form action="<?php echo Mage::helper('checkout/cart')->getAddUrl($product); ?>" method="post">
                                 <?php echo $this->getPriceHtml($product);?>
                                 <div class="add-to-cart-alt">
-                                    <?php if ($item->getQty() > 0): ?>
-                                        <input type="text" class="input-text qty validate-not-negative-number" name="qty" value="<?php echo $item->getQty(); ?>">
-                                    <?php endif; ?>
+                                    <input type="text" class="input-text qty validate-not-negative-number" name="qty" value="<?php echo $item->getQty(); ?>">
                                     <input type="hidden" name="product" value="<?php echo $product->getId() ?>">
                                     <button type="submit" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart"><span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
                             </form>
@@ -48,7 +47,7 @@
                 <td class="last">
                     <a href="<?php echo $this->getUrl('*/*/remove/', array('id' => $item->getStockreminderId())) ?>"
                     title="<?php echo $this->__('Remove Item') ?>"
-                    class="btn-remove btn-remove2"><?php echo $this->__('Remove item');?></a>
+                    class="out-of-stock"><span><span><?php echo $this->__('Remove item');?></span></span></a>
                 </td>
             </tr>
         <?php endforeach ?>
