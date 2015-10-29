@@ -6,6 +6,7 @@ class Edge_StockReminder_Model_Observer
 
     public function checkOutOfStock($data)
     {
+        $message    = '';
         $product    = $data->getEvent()->getProduct();
         $quoteItem  = $data->getEvent()->getQuoteItem();
         $quantity   = Mage::app()->getRequest()->getParam('qty');
@@ -53,6 +54,7 @@ class Edge_StockReminder_Model_Observer
             $model = Mage::getModel('stockreminder/stockreminder')->load($stockExist->getStockreminderId())->addData($data);
             try {
                 $model->setId($stockExist->getStockreminderId())->save();
+                $message = 'Limited by stock.';
             } catch (Exception $e){
                 echo $e->getMessage();
             }
@@ -70,10 +72,13 @@ class Edge_StockReminder_Model_Observer
 
             try {
                 $model->save()->getId();
+                $message = 'Limited by stock.';
             } catch (Exception $e) {
                 echo $e->getMessage();
             }
         }
+
+        return  Mage::app()->getResponse()->setBody($message);
    }
 
     public function updateCart($observer)
