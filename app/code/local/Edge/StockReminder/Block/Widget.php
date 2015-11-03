@@ -19,7 +19,7 @@ class Edge_StockReminder_Block_Widget extends Mage_Core_Block_Template implement
 
         foreach ($backInStock as $product) {
 
-            $html .= '<div class="okok">'
+            $html .= '<div>'
                 . '<form action='. Mage::helper('checkout/cart')->getAddUrl($product) .' method="post">'
                 . '<div><a href="'.$product->getProductUrl().'" title="'. $this->escapeHtml($product->getName()).'">'
                 . $this->escapeHtml($product->getName()) .'</a></div>'
