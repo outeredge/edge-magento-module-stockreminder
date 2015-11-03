@@ -34,7 +34,7 @@
                             <form action="<?php echo Mage::helper('checkout/cart')->getAddUrl($product); ?>" method="post">
                                 <?php echo $this->getPriceHtml($product);?>
                                 <div class="add-to-cart-alt">
-                                    <input type="text" class="input-text qty validate-not-negative-number" name="qty" value="<?php echo $item->getQty(); ?>">
+                                    <input type="text" class="input-text qty validate-not-negative-number" name="qty" value="<?php echo $item->getQty()*1 ; ?>">
                                     <input type="hidden" name="product" value="<?php echo $product->getId() ?>">
                                     <button type="submit" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart"><span><span><?php echo $this->__('Add to Cart') ?></span></span></button>
                             </form>

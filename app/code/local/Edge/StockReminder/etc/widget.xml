@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<widgets>
+  <stockreminder_widget type="stockreminder/widget">
+    <name>Stock Reminder Widget</name>
+    <description type="desc">List the back in stock products</description>
+  </stockreminder_widget>
+</widgets>

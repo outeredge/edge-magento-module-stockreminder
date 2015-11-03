@@ -106,5 +106,34 @@ class Edge_StockReminder_Model_Stockreminder extends Mage_Core_Model_Abstract
 
         return true;
     }
+
+    public function getBackInStockByCustomer($customer)
+    {
+        $result = $this->getCollection()
+            ->addFilter('customer_id', $customer);
+
+        if ($result->getData()) {
+
+            $output = [];
+            foreach ($result->getData() as $item) {
+
+                if (is_array($item) && isset($item['product_id'])) {
+
+                    $product = Mage::getModel('catalog/product')->load((int)$item['product_id']);
+                    $stocklevel = (int)Mage::getModel('cataloginventory/stock_item')
+                        ->loadByProduct($product)->getQty();
+
+                    if ($product->isSaleable() && $stocklevel >= $item['qty']) {
+
+                        $product['requested_quantity'] = $item['qty'];
+                        $output[] = $product;
+                    }
+                }
+            }
+            return $output;
+        }
+
+        return false;
+    }
 }
 

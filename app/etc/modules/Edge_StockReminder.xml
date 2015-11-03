@@ -4,6 +4,9 @@
         <Edge_StockReminder>
             <active>true</active>
             <codePool>local</codePool>
+            <depends>
+                <Mage_Cms />
+            </depends>
         </Edge_StockReminder>
     </modules>
 </config>
