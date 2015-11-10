@@ -6,29 +6,41 @@ class Edge_StockReminder_Model_Observer
 
     public function checkOutOfStock($data)
     {
-        $message    = '';
-        $product    = $data->getEvent()->getProduct();
-        $quoteItem  = $data->getEvent()->getQuoteItem();
-        $quantity   = Mage::app()->getRequest()->getParam('qty');
+        $message        = '';
+        $productId      = Mage::app()->getRequest()->getParam('product');
+        $quantity       = Mage::app()->getRequest()->getParam('qty');
+        $superAttribute = Mage::app()->getRequest()->getParam('super_attribute');
+        $bundleOption   = Mage::app()->getRequest()->getParam('bundle_option');
+        $customerId     = Mage::getSingleton('customer/session')->getCustomerId();
 
-        $customerId = Mage::getSingleton('customer/session')->getCustomerId();
-
-        if (!$product->getId()) {
+        if (!$productId) {
             return;
         }
 
-        $product = Mage::getModel('catalog/product')->loadByAttribute('sku', $quoteItem->getSku());
+        if ($superAttribute) {
+            $product = Mage::getModel('catalog/product')->load($productId);
+            $productId = Mage::getModel('catalog/product_type_configurable')->getProductByAttributes($superAttribute, $product)->getId();
+        }
 
         $this->removeQty = true;
-        $stockReminderQty  = $product->getQty();
-        $productStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($product);
+        $productStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productId);
+        $stockReminderQty  = $productStock->getQty();
+
+        if ($bundleOption) {
+            foreach ($bundleOption as $bundleItem) {
+                $bundleItemStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($bundleItem);
+                if ($bundleItemStock->getQty() <= $quantity) {
+                    $productStock->setQty($bundleItemStock->getQty());
+                }
+            }
+        }
 
         if ($productStock->getQty() >= $quantity) {
             //Nothing to save on stockreminder
             $this->removeQty = false;
 
             //Delete product from stock reminder if exist
-            $data = array('customer_id' => $customerId, 'product_id' => $product->getId());
+            $data = array('customer_id' => $customerId, 'product_id' => $productId);
             if ($result = Mage::getModel('stockreminder/stockreminder')->getByCustomerAndProduct($data)) {
                 Mage::getModel('stockreminder/stockreminder')->removeStockReminder($result['stockreminder_id']);
             }
@@ -41,7 +53,7 @@ class Edge_StockReminder_Model_Observer
         $stockExist = Mage::getModel('stockreminder/stockreminder')
             ->getByCustomerAndProduct([
                 'customer_id' => $customerId,
-                'product_id'  => $product->getId()
+                'product_id'  => $productId
                 ]);
 
         if ($stockExist) {
@@ -62,7 +74,7 @@ class Edge_StockReminder_Model_Observer
             //create
             $data = array(
                 'customer_id' => $customerId,
-                'product_id'  => $product->getId(),
+                'product_id'  => $productId,
                 'store_id'    => Mage::app()->getStore()->getStoreId(),
                 'added_at'    => Mage::getModel('core/date')->gmtTimestamp(),
                 'qty'         => $stockReminderQty
