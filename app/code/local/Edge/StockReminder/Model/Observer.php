@@ -7,14 +7,25 @@ class Edge_StockReminder_Model_Observer
     public function checkOutOfStock($data)
     {
         $message        = '';
-        $productId      = Mage::app()->getRequest()->getParam('product');
+        $product        = $data->getEvent()->getProduct();
+	$productId 	= $product->getId();
         $quantity       = Mage::app()->getRequest()->getParam('qty');
         $superAttribute = Mage::app()->getRequest()->getParam('super_attribute');
         $bundleOption   = Mage::app()->getRequest()->getParam('bundle_option');
         $customerId     = Mage::getSingleton('customer/session')->getCustomerId();
 
-        if (!$productId) {
+        if (!$product->getId()) {
             return;
+        }
+
+        if (empty($superAttribute)) {
+            $extraData = Mage::app()->getRequest()->getParam('product');
+            if (is_array($extraData)) {
+                $extraData = reset($extraData);
+                if (isset($extraData['super_attribute'])) {
+                    $superAttribute = $extraData['super_attribute'];
+                }
+            }
         }
 
         if ($superAttribute) {
