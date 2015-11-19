@@ -20,10 +20,13 @@ class Edge_StockReminder_Model_Observer
 
         if (empty($superAttribute)) {
             $extraData = Mage::app()->getRequest()->getParam('product');
-            if (is_array($extraData)) {
-                $extraData = reset($extraData);
-                if (isset($extraData['super_attribute'])) {
-                    $superAttribute = $extraData['super_attribute'];
+            foreach ($extraData as $extra) {
+                $extraId = Mage::getModel('catalog/product')->getIdBySku($extra['sku']);
+                if ($extraId == $productId) {
+                    if (isset($extra['super_attribute'])) {
+                        $superAttribute = $extra['super_attribute'];
+                    }
+                    break;
                 }
             }
         }
