@@ -13,7 +13,24 @@
         <?php foreach ($this->getStockItems() as $item): ?>
             <?php $product = Mage::getModel('catalog/product')->load($item->getProductId());
                   $stocklevel = (int)Mage::getModel('cataloginventory/stock_item')
-                                    ->loadByProduct($product)->getQty(); ?>
+                                    ->loadByProduct($product)->getQty();
+
+                //Bundle Check
+                if ($product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
+                    $bundled_product = new Mage_Catalog_Model_Product();
+                    $bundled_product->load($product->getId());
+
+                    $selectionCollection = $bundled_product->getTypeInstance(true)->getSelectionsCollection(
+                    $bundled_product->getTypeInstance(true)->getOptionsIds($bundled_product), $bundled_product
+                    );
+
+                    foreach ($selectionCollection as $option) {
+                        $bundleItemStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($option->product_id);
+                        $bundleStockArray[] = $bundleItemStock->getQty();
+                    }
+                    $stocklevel = min($bundleStockArray);
+                }
+            ?>
             <tr id="item_<?php echo $item->getStockreminderId();?>">
                 <td><a class="product-image" href="<?php echo $product->getProductUrl() ?>" title="<?php  echo $this->escapeHtml($product->getName()); ?>">
                         <img src="<?php echo $this->helper('catalog/image')->init($product, 'small_image')->resize(113, 113); ?>" width="113" height="113" alt="<?php echo $this->escapeHtml($product->getName()) ?>" />

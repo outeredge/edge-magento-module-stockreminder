@@ -14,19 +14,21 @@ class Edge_StockReminder_Model_Observer
         $bundleOption   = Mage::app()->getRequest()->getParam('bundle_option');
         $customerId     = Mage::getSingleton('customer/session')->getCustomerId();
 
-        if (!$product->getId()) {
+        if (!$productId) {
             return;
         }
 
         if (empty($superAttribute)) {
             $extraData = Mage::app()->getRequest()->getParam('product');
-            foreach ($extraData as $extra) {
-                $extraId = Mage::getModel('catalog/product')->getIdBySku($extra['sku']);
-                if ($extraId == $productId) {
-                    if (isset($extra['super_attribute'])) {
-                        $superAttribute = $extra['super_attribute'];
+            if (is_array($extraData)) {
+               foreach ($extraData as $extra) {
+                    $extraId = Mage::getModel('catalog/product')->getIdBySku($extra['sku']);
+                    if ($extraId == $productId) {
+                        if (isset($extra['super_attribute'])) {
+                            $superAttribute = $extra['super_attribute'];
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
@@ -40,14 +42,22 @@ class Edge_StockReminder_Model_Observer
         $productStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productId);
         $stockReminderQty  = $productStock->getQty();
 
-        if ($bundleOption) {
-            foreach ($bundleOption as $bundleItem) {
-                $bundleItemStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($bundleItem);
-                if ($bundleItemStock->getQty() <= $quantity) {
-                    $productStock->setQty($bundleItemStock->getQty());
-                }
+        //Bundle Check
+        if ($product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
+            $bundled_product = new Mage_Catalog_Model_Product();
+            $bundled_product->load($product->getId());
+
+            $selectionCollection = $bundled_product->getTypeInstance(true)->getSelectionsCollection(
+            $bundled_product->getTypeInstance(true)->getOptionsIds($bundled_product), $bundled_product
+            );
+
+            foreach ($selectionCollection as $option) {
+                $bundleItemStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($option->product_id);
+                $bundleStockArray[] = $bundleItemStock->getQty();
             }
+            $productStock->setQty(min($bundleStockArray));
         }
+
 
         if ($productStock->getQty() >= $quantity) {
             //Nothing to save on stockreminder
