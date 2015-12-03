@@ -18,7 +18,8 @@
             ["app/etc/modules/Edge_StockReminder.xml", "app/etc/modules/Edge_StockReminder.xml"],
             ["app/design/frontend/base/default/layout/edge/stockreminder.xml", "app/design/frontend/base/default/layout/edge/stockreminder.xml"],
             ["app/design/frontend/base/default/template/edge/stockreminder/item/list.phtml", "app/design/frontend/base/default/template/edge/stockreminder/item/list.phtml"],
-            ["app/design/frontend/base/default/template/edge/stockreminder/view.phtml", "app/design/frontend/base/default/template/edge/stockreminder/view.phtml"]
+            ["app/design/frontend/base/default/template/edge/stockreminder/view.phtml", "app/design/frontend/base/default/template/edge/stockreminder/view.phtml"],
+            ["app/locale/en_GB/template/email/stock_reminder.html", "app/locale/en_GB/template/email/stock_reminder.html"]
         ]
     }
 }
