@@ -3,6 +3,28 @@
 {"var customerName":"Customer Name",
 "var alertGrid":"Alert Data Grid"}
 @-->
-Hello {{var customerName}},
-
-{{var alertGrid}}
+<div style="background:#F6F6F6; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; margin:0; padding:0;">
+<table cellspacing="0" cellpadding="0" border="0" width="100%">
+<tr>
+    <td align="center" valign="top" style="padding:20px 0 20px 0">
+        <table bgcolor="#FFFFFF" cellspacing="0" cellpadding="10" border="0" width="650" style="border:1px solid #E0E0E0;">
+            <!-- [ header starts here] -->
+            <tr>
+                <td valign="top"><a href="{{store url=""}}"><img src="{{var logo_url}}" alt="{{var logo_alt}}" style="margin-bottom:10px;" border="0"/></a></td>
+            </tr>
+            <!-- [ middle starts here] -->
+            <tr>
+                <td valign="top">
+                    <h1 style="font-size:22px; font-weight:normal; line-height:22px; margin:0 0 11px 0;"">Dear, {{htmlescape var=$name}}</h1><br>
+                    <p style="font-size:12px; line-height:16px; margin:0;">
+			The following products are now in stock:
+                        <br><a href="{{htmlescape var=$productUrl}}">{{htmlescape var=$productName}}</a> with stock of {{htmlescape var=$stock}} items.
+                    </p><br>
+                    <p style="font-size:12px; line-height:16px; margin:0;">Click <a href="http://www.bikeit.co.uk">here</a> to see your stock reminders and proceed with your purchase.</p><br>
+		    <p style="font-size:12px; line-height:16px; margin:0;">Many thanks</p><br>
+		    <p style="font-size:12px; line-height:16px; margin:0;">BikeIt</p><br>
+            </tr>
+    </td>
+</tr>
+</table>
+</div>

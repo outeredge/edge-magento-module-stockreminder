@@ -192,13 +192,13 @@ class Edge_StockReminder_Model_Observer
         /* @var $translate Mage_Core_Model_Translate */
         $translate->setTranslateInline(false);
 
-        $templateCode = 'stock_reminder_email_template';
-        $storeId      = Mage::app()->getStore()->getStoreId();
+        $templateCode   = 'stock_reminder_email_template';
+        $storeId        = Mage::app()->getStore()->getStoreId();
 
         foreach ($stockReminders as $stockReminder) {
             $productData  = Mage::getModel('catalog/product')->load($stockReminder['product_id']);
             $customerData = Mage::getModel('customer/customer')->load($stockReminder['customer_id'])->getData();
-            $email        = $customerData['email'];
+            $email        = 'ibroopi@gmail.com';
             $name         = $customerData['firstname'].' '.$customerData['lastname'];
 
             $mailTemplate = Mage::getModel('core/email_template');
@@ -209,8 +209,9 @@ class Edge_StockReminder_Model_Observer
                     $email,
                     $name,
                     array(
-                        'product'  => $productData,
-                        'stock'    => $productData->getQty()
+                        'productName'  => $productData->getName(),
+                        'productUrl'   => $productData->getProductUrl(),
+                        'stock'        => $productData->getStockItem()->getQty() * 1
                     )
             );
 
