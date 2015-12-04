@@ -58,7 +58,7 @@ class Edge_StockReminder_Model_Observer
             $productStock->setQty(min($bundleStockArray));
         }
 
-
+	$productStock->setQty(max($productStock->getQty(), 0));
         if ($productStock->getQty() >= $quantity) {
             //Nothing to save on stockreminder
             $this->removeQty = false;
