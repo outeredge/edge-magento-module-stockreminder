@@ -198,7 +198,7 @@ class Edge_StockReminder_Model_Observer
         foreach ($stockReminders as $stockReminder) {
             $productData  = Mage::getModel('catalog/product')->load($stockReminder['product_id']);
             $customerData = Mage::getModel('customer/customer')->load($stockReminder['customer_id'])->getData();
-            $email        = 'ibroopi@gmail.com';
+            $email        = $customerData['email'];
             $name         = $customerData['firstname'].' '.$customerData['lastname'];
 
             $mailTemplate = Mage::getModel('core/email_template');
