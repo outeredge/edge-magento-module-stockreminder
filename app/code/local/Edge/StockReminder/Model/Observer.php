@@ -193,7 +193,7 @@ class Edge_StockReminder_Model_Observer
         $translate->setTranslateInline(false);
 
         $storeId = Mage::app()->getStore()->getStoreId();
-        $templateConfigPath = 'printproof/email/stock_reminder_email_template';
+        $templateConfigPath = 'stockreminder/email/stock_reminder_email_template';
         $mailTemplate = Mage::getModel('core/email_template');
         $template     = Mage::getStoreConfig($templateConfigPath, $storeId);
 
