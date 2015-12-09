@@ -192,8 +192,10 @@ class Edge_StockReminder_Model_Observer
         /* @var $translate Mage_Core_Model_Translate */
         $translate->setTranslateInline(false);
 
-        $templateCode   = 'stock_reminder_email_template';
-        $storeId        = Mage::app()->getStore()->getStoreId();
+        $storeId = Mage::app()->getStore()->getStoreId();
+        $templateConfigPath = 'printproof/email/stock_reminder_email_template';
+        $mailTemplate = Mage::getModel('core/email_template');
+        $template     = Mage::getStoreConfig($templateConfigPath, $storeId);
 
         foreach ($stockReminders as $stockReminder) {
             $productData  = Mage::getModel('catalog/product')->load($stockReminder['product_id']);
@@ -204,7 +206,7 @@ class Edge_StockReminder_Model_Observer
             $mailTemplate = Mage::getModel('core/email_template');
             $mailTemplate->setDesignConfig(array('area' => 'frontend', 'store' => $storeId))
                 ->sendTransactional(
-                    $templateCode,
+                    $template,
                     'general',
                     $email,
                     $name,
