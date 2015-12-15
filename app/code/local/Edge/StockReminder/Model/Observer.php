@@ -156,6 +156,10 @@ class Edge_StockReminder_Model_Observer
 
     protected function _updateItem($quote, $productItemId)
     {
+        if (empty($quote->getAllItems())) {
+            $quote = Mage::getSingleton('checkout/cart')->getQuote();
+        }
+        
         foreach ($quote->getAllItems() as $item) {
 
             if ($item->getProductId() == $productItemId) {
