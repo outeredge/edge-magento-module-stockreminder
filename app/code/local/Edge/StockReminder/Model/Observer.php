@@ -40,7 +40,7 @@ class Edge_StockReminder_Model_Observer
 
         $this->removeQty = true;
         $productStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productId);
-        $stockReminderQty  = $productStock->getQty();
+        $stockReminderQty  = $quantity;
 
         //Bundle Check
         if ($product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
@@ -159,7 +159,7 @@ class Edge_StockReminder_Model_Observer
         if (empty($quote->getAllItems())) {
             $quote = Mage::getSingleton('checkout/cart')->getQuote();
         }
-        
+
         foreach ($quote->getAllItems() as $item) {
 
             if ($item->getProductId() == $productItemId) {
