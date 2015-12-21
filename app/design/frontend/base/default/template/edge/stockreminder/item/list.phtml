@@ -30,14 +30,24 @@
                     }
                     $stocklevel = min($bundleStockArray);
                 }
+
+                //Url verification
+                $url     = $product->getProductUrl();
+                $rewrite = Mage::getModel('core/url_rewrite');
+
+                $arrayOfParentIds = Mage::getSingleton('catalog/product_type_configurable')->getParentIdsByChild($product->getId());
+                if ($arrayOfParentIds) {
+                    $rewrite->loadByIdPath('product/'.$arrayOfParentIds[0]);
+                    $url = Mage::getUrl($rewrite->getRequestPath(), ['_current' => false]);
+                }
             ?>
             <tr id="item_<?php echo $item->getStockreminderId();?>">
-                <td><a class="product-image" href="<?php echo $product->getProductUrl() ?>" title="<?php  echo $this->escapeHtml($product->getName()); ?>">
+                <td><a class="product-image" href="<?php echo $url ?>" title="<?php  echo $this->escapeHtml($product->getName()); ?>">
                         <img src="<?php echo $this->helper('catalog/image')->init($product, 'small_image')->resize(113, 113); ?>" width="113" height="113" alt="<?php echo $this->escapeHtml($product->getName()) ?>" />
                     </a>
                 </td>
                 <td><h3 class="product-name">
-                    <a href="<?php echo $product->getProductUrl() ?>" title="<?php  echo $this->escapeHtml($product->getName()); ?>">
+                    <a href="<?php echo $url ?>" title="<?php  echo $this->escapeHtml($product->getName()); ?>">
                         <?php  echo $this->escapeHtml($product->getName()); ?></a>
                     </h3>
                     <div class="description std">

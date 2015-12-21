@@ -119,21 +119,24 @@ class Edge_StockReminder_Model_Observer
 
     public function updateCart($observer)
     {
-        $product = $observer->getEvent()->getProduct();
-
+        $product     = $observer->getEvent()->getProduct();
         $lastQuoteId = Mage::getSingleton('checkout/session')->getQuoteId();
 
         if ($lastQuoteId) {
-            $customerQuote = Mage::getModel('sales/quote')
+            $quote = Mage::getModel('sales/quote')
                 ->loadByCustomer(Mage::getSingleton('customer/session')->getCustomerId());
-            $customerQuote->setQuoteId($lastQuoteId);
+            $quote->setQuoteId($lastQuoteId);
 
-            if ($this->removeQty === true) {
-                $this->_removeItem($customerQuote, $product->getId());
-            } elseif (is_numeric($this->removeQty)) {
-                $this->_updateItem($customerQuote, $product->getId());
+            $quoteSession = Mage::getSingleton('checkout/cart')->getQuote();
+            if (count($quoteSession->getAllItems()) > count($quote->getAllItems())) {
+                $quote = $quoteSession;
             }
 
+            if ($this->removeQty === true) {
+                $this->_removeItem($quote, $product->getId());
+            } elseif (is_numeric($this->removeQty)) {
+                $this->_updateItem($quote, $product->getId());
+            }
         }
     }
 
@@ -156,11 +159,6 @@ class Edge_StockReminder_Model_Observer
 
     protected function _updateItem($quote, $productItemId)
     {
-        $quoteSession = Mage::getSingleton('checkout/cart')->getQuote();
-        if (count($quoteSession->getAllItems()) > count($quote->getAllItems())) {
-            $quote = $quoteSession;
-        }
-
         foreach ($quote->getAllItems() as $item) {
 
             if ($item->getProductId() == $productItemId) {
