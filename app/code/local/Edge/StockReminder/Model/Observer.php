@@ -156,8 +156,9 @@ class Edge_StockReminder_Model_Observer
 
     protected function _updateItem($quote, $productItemId)
     {
-        if (empty($quote->getAllItems())) {
-            $quote = Mage::getSingleton('checkout/cart')->getQuote();
+        $quoteSession = Mage::getSingleton('checkout/cart')->getQuote();
+        if (count($quoteSession->getAllItems()) > count($quote->getAllItems())) {
+            $quote = $quoteSession;
         }
 
         foreach ($quote->getAllItems() as $item) {
@@ -217,6 +218,8 @@ class Edge_StockReminder_Model_Observer
                     array(
                         'productName'  => $productData->getName(),
                         'productUrl'   => $productData->getProductUrl(),
+                        'productSku'   => $productData->getSku(),
+                        'productDesc'  => $productData->getShortDescription(),
                         'stock'        => $productData->getStockItem()->getQty() * 1
                     )
             );
