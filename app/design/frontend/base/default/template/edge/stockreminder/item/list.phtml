@@ -39,6 +39,11 @@
                 if ($arrayOfParentIds) {
                     $rewrite->loadByIdPath('product/'.$arrayOfParentIds[0]);
                     $url = Mage::getUrl($rewrite->getRequestPath(), ['_current' => false]);
+
+                    if ($product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
+                        $productSimple = Mage::getModel('catalog/product')->load($arrayOfParentIds[0]);
+                        $url = Mage::getUrl($productSimple->getUrlPath(), ['_current' => false]);
+                    }
                 }
             ?>
             <tr id="item_<?php echo $item->getStockreminderId();?>">
