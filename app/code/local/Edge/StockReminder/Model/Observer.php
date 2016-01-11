@@ -90,7 +90,7 @@ class Edge_StockReminder_Model_Observer
             $model = Mage::getModel('stockreminder/stockreminder')->load($stockExist->getStockreminderId())->addData($data);
             try {
                 $model->setId($stockExist->getStockreminderId())->save();
-                $message = 'Limited by stock.';
+                $message = true;
             } catch (Exception $e){
                 echo $e->getMessage();
             }
@@ -108,10 +108,15 @@ class Edge_StockReminder_Model_Observer
 
             try {
                 $model->save()->getId();
-                $message = 'Limited by stock.';
+                $message = true;
             } catch (Exception $e) {
                 echo $e->getMessage();
             }
+        }
+
+        if ($message === true) {
+            $product = Mage::getModel('catalog/product')->load($productId);
+            $message = $product->getName() ." only ".($productStock->getQty()*1)." available in stock, added ".$data['qty']." to your Stock Reminders";
         }
 
         return  Mage::app()->getResponse()->setBody($message);
