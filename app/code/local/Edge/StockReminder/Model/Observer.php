@@ -172,7 +172,9 @@ class Edge_StockReminder_Model_Observer
 
             if ($item->getHasChildren()) {
                 foreach ($item->getChildren() as $child) {
-                    $item->setQty($this->removeQty);
+                    if ($child->getProductId() == $productItemId) {
+                        $item->setQty($this->removeQty);
+                    }
                 }
             }
         }
