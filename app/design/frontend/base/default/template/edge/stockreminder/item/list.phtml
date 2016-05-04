@@ -12,23 +12,30 @@
     <tbody>
         <?php foreach ($this->getStockItems() as $item): ?>
             <?php $product = Mage::getModel('catalog/product')->load($item->getProductId());
-                  $stocklevel = (int)Mage::getModel('cataloginventory/stock_item')
-                                    ->loadByProduct($product)->getQty();
-
-                //Bundle Check
+                //Configurable product
+                if ($product->getTypeId() === Mage_Catalog_Model_Product_Type_Configurable::TYPE_CODE) {
+                    $stockQty = 0;
+                    foreach ($product->getTypeInstance(true)->getUsedProducts(null, $product) as $simple) {
+                        $stockQty += $simple->getStockItem()->getQty();
+                    }
+                } else {
+                //Simple product
+                    $stockQty = $product->getStockItem()->getQty();
+                }
+                //Bundle product
                 if ($product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
                     $bundled_product = new Mage_Catalog_Model_Product();
                     $bundled_product->load($product->getId());
 
                     $selectionCollection = $bundled_product->getTypeInstance(true)->getSelectionsCollection(
-                    $bundled_product->getTypeInstance(true)->getOptionsIds($bundled_product), $bundled_product
-                    );
+                        $bundled_product->getTypeInstance(true)->getOptionsIds($bundled_product),
+                        $bundled_product);
 
                     foreach ($selectionCollection as $option) {
                         $bundleItemStock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($option->product_id);
                         $bundleStockArray[] = $bundleItemStock->getQty();
                     }
-                    $stocklevel = min($bundleStockArray);
+                    $stockQty = min($bundleStockArray);
                 }
 
                 //Url verification
@@ -62,7 +69,7 @@
                 <td>
                     <div class="cart-cell">
                         <?php
-                        if ($product->isSaleable() && $stocklevel >= $item->getQty()): ?>
+                        if ($product->isSaleable() && $stockQty >= $item->getQty()): ?>
                             <form action="<?php echo Mage::helper('checkout/cart')->getAddUrl($product); ?>" method="post">
                                 <?php echo $this->getPriceHtml($product);?>
                                 <div class="add-to-cart-alt">
