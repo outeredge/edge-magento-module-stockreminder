@@ -116,26 +116,23 @@ class Edge_StockReminder_Model_Observer
 
         if ($message === true) {
             $product = Mage::getModel('catalog/product')->load($productId);
-            $message = $product->getName() ." only ".($productStock->getQty()*1)." available in stock, added ".$data['qty']." to your Stock Reminders";
+            $message = $product->getName() ." only ".($productStock->getQty()*1)." available in stock, added ".$stockReminderQty." to your Stock Reminders";
         }
 
-        return  Mage::app()->getResponse()->setBody($message);
-   }
+        Mage::register('stockreminder_'.$product->getSku(), $this->removeQty);
+        return Mage::app()->getResponse()->setBody($message);
+    }
 
     public function updateCart($observer)
     {
         $product     = $observer->getEvent()->getProduct();
         $lastQuoteId = Mage::getSingleton('checkout/session')->getQuoteId();
+        $this->removeQty = Mage::registry('stockreminder_'.$product->getSku());
 
         if ($lastQuoteId) {
             $quote = Mage::getModel('sales/quote')
                 ->loadByCustomer(Mage::getSingleton('customer/session')->getCustomerId());
             $quote->setQuoteId($lastQuoteId);
-
-            $quoteSession = Mage::getSingleton('checkout/cart')->getQuote();
-            if (count($quoteSession->getAllItems()) > count($quote->getAllItems())) {
-                $quote = $quoteSession;
-            }
 
             if ($this->removeQty === true) {
                 $this->_removeItem($quote, $product->getId());
