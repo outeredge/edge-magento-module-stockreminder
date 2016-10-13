@@ -6,7 +6,6 @@ class Edge_StockReminder_Model_Observer
 
     public function checkOutOfStock($data)
     {
-        Mage::log('checkOutOfStock');
         $message        = '';
         $product        = $data->getEvent()->getProduct();
 	$productId 	= $product->getId();
