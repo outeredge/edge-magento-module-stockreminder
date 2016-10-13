@@ -6,6 +6,7 @@ class Edge_StockReminder_Model_Observer
 
     public function checkOutOfStock($data)
     {
+        Mage::log('checkOutOfStock');
         $message        = '';
         $product        = $data->getEvent()->getProduct();
 	$productId 	= $product->getId();
@@ -125,9 +126,17 @@ class Edge_StockReminder_Model_Observer
 
     public function updateCart($observer)
     {
-        $product     = $observer->getEvent()->getProduct();
-        $lastQuoteId = Mage::getSingleton('checkout/session')->getQuoteId();
+        $product         = $observer->getEvent()->getProduct();
+        $lastQuoteId     = Mage::getSingleton('checkout/session')->getQuoteId();
         $this->removeQty = Mage::registry('stockreminder_'.$product->getSku());
+
+        $attr = $observer->getEvent()->getAttribute();
+        if (!empty($attr)) {
+            $productSimpleConfig = Mage::getModel('catalog/product_type_configurable')
+                ->getProductByAttributes($attr, $product);
+
+            $this->removeQty = Mage::registry('stockreminder_'.$productSimpleConfig->getSku());
+        }
 
         if ($lastQuoteId) {
             $quote = Mage::getModel('sales/quote')
